@@ -1,18 +1,13 @@
-bin/
-obj/
+UploadImagemR2/bin/
+UploadImagemR2/obj/
+UploadImagemR2/appsettings.Development.json
 
+.vscode/
 .vs/
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
 
 *.user
 *.suo
 
-appsettings.Development.json
-
-
 logs/
 *.log
-
 publish/
