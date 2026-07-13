@@ -53,7 +53,7 @@ namespace UploadImagemR2.Controller
         {
             try
             {
-                var resultado = await _r2Storage.DeleteAsync(arquivo);
+                await _r2Storage.DeleteAsync(arquivo);
 
                 return NoContent();
             }

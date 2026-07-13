@@ -1,4 +1,3 @@
-using Amazon.S3.Model;
 using UploadImagemR2.Models;
 
 namespace UploadImagemR2.Services

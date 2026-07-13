@@ -1,12 +1,11 @@
 using Microsoft.Extensions.Options;
 using UploadImagemR2.Configurations;
-using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Microsoft.AspNetCore.Http.HttpResults;
 using UploadImagemR2.Models;
-using System.ComponentModel.DataAnnotations;
+using UploadImagemR2.Data;
+using System.Data.Common;
 
 namespace UploadImagemR2.Services
 {
@@ -14,8 +13,9 @@ namespace UploadImagemR2.Services
     {
         private readonly R2Settings _r2Settings;
         private readonly AmazonS3Client _s3Client;
+        private readonly AppDbContext _context;
 
-        public R2StorageService(IOptions<R2Settings> options)
+        public R2StorageService(IOptions<R2Settings> options, AppDbContext context)
         {
             _r2Settings = options.Value;
 
@@ -29,19 +29,22 @@ namespace UploadImagemR2.Services
             };
 
             _s3Client = new AmazonS3Client(credentials, config);
+
+            _context = context;
+
         }
 
         public async Task<UploadResult> UploadAsync(IFormFile file)
         {
-            var testeContent = file.ContentType;
-            var testeExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            var contentType = file.ContentType;
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
-            if (testeExtension != ".jpg" && testeExtension != ".jpeg")
+            if (extension != ".jpg" && extension != ".jpeg")
             {
                 throw new Exception("Extensao de arquivo invalido");
             }
 
-            if (testeContent != "image/jpeg")
+            if (contentType != "image/jpeg")
             {
                 throw new Exception("Formato de arquivo invalido");
             }
@@ -65,7 +68,30 @@ namespace UploadImagemR2.Services
                 DisableDefaultChecksumValidation = true
             };
 
+
             await _s3Client.PutObjectAsync(request);
+
+            try
+            {
+                var arquivoDb = new Arquivo
+                {
+                    NomeOriginal = file.FileName,
+                    NomeArquivo = arquivo,
+                    ContentType = file.ContentType,
+                    Tamanho = file.Length,
+                    DataUpload = DateTime.UtcNow
+                };
+
+                _context.Arquivos.Add(arquivoDb);
+
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception)
+            {
+                await _s3Client.DeleteObjectAsync(_r2Settings.BucketName, request.Key);
+                throw;
+            }
 
             return new UploadResult
             {
