@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UploadImagemR2.Configurations;
 using UploadImagemR2.Data;
+using UploadImagemR2.Middlewares;
 using UploadImagemR2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +15,7 @@ builder.Services.AddScoped<IR2StorageService, R2StorageService>();
 
 builder.Services.AddDbContext<AppDbContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
@@ -33,6 +33,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 

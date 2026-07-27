@@ -6,6 +6,7 @@ using Amazon.S3.Model;
 using UploadImagemR2.Models;
 using UploadImagemR2.Data;
 using System.Data.Common;
+using UploadImagemR2.Exceptions;
 
 namespace UploadImagemR2.Services
 {
@@ -41,17 +42,17 @@ namespace UploadImagemR2.Services
 
             if (extension != ".jpg" && extension != ".jpeg")
             {
-                throw new Exception("Extensao de arquivo invalido");
+                throw new ArquivoInvalidoException();
             }
 
             if (contentType != "image/jpeg")
             {
-                throw new Exception("Formato de arquivo invalido");
+                throw new ArquivoInvalidoException();
             }
 
             if (file.Length > 10 * 1024 * 1024)
             {
-                throw new Exception("O arquivo deve ser menor que 10MB");
+                throw new ArquivoMuitoGrandeException();
             }
 
             var arquivo = $"{Guid.NewGuid()}-{file.FileName}";
@@ -134,13 +135,13 @@ namespace UploadImagemR2.Services
             var response = await _s3Client.ListObjectsV2Async(request);
             var listaObjetos = new List<ListResult>();
 
-            foreach (var i in response.S3Objects)
+            foreach (var arquivo in response.S3Objects)
             {
                 listaObjetos.Add(new ListResult
                 {
-                    Nome = i.Key,
-                    Tamanho = i.Size,
-                    UltimaModificacao = i.LastModified
+                    Nome = arquivo.Key,
+                    Tamanho = arquivo.Size,
+                    UltimaModificacao = arquivo.LastModified
                 });
             }
 
