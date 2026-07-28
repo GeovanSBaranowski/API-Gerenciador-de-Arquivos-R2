@@ -10,5 +10,6 @@ namespace UploadImagemR2.Data
         }
 
         public DbSet<Arquivo> Arquivos { get; set; }
+        public DbSet<Aplicacao> Aplicacoes { get; set; }
     }
 }

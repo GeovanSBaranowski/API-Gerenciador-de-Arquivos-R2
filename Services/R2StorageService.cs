@@ -5,7 +5,6 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using UploadImagemR2.Models;
 using UploadImagemR2.Data;
-using System.Data.Common;
 using UploadImagemR2.Exceptions;
 
 namespace UploadImagemR2.Services
