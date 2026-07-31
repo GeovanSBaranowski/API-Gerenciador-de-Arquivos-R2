@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using UploadImagemR2.Configurations;
 using UploadImagemR2.Data;
+using UploadImagemR2.Interfaces;
 using UploadImagemR2.Middlewares;
+using UploadImagemR2.Repository;
 using UploadImagemR2.Services;
+using UploadImagemR2.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,12 @@ builder.Services.AddOptions<R2Settings>()
     .ValidateOnStart();
 
 builder.Services.AddScoped<IR2StorageService, R2StorageService>();
+
+builder.Services.AddScoped<ApiKeyService>();
+
+builder.Services.AddScoped<IAplicacaoService, AplicacaoService>();
+
+builder.Services.AddScoped<IAplicacaoRepository, AplicacaoRepository>();
 
 builder.Services.AddDbContext<AppDbContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
