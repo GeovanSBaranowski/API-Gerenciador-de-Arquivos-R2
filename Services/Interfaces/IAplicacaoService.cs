@@ -8,5 +8,7 @@ namespace UploadImagemR2.Services.Interfaces
          Task<AplicacaoResponse> CreateAsync(CreateAplicacaoRequest aplicacaoRequest);
          Task<AplicacaoResponse> GetByIdAsync(Guid id);
          Task<AplicacaoResponse> GetByApiKeyHashAsync(string hash);
+
+         Task<Aplicacao?> AuthenticateApiKeyAsync(string apiKey);
     }
 }

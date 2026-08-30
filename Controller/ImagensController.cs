@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Mvc;
+using UploadImagemR2.Constants;
 using UploadImagemR2.Models;
 using UploadImagemR2.Services;
 
@@ -20,11 +21,20 @@ namespace UploadImagemR2.Controller
         [HttpPost]
         public async Task<IActionResult> UploadAsync([FromForm] IFormFile arquivo)
         {
+            var aplicacao = HttpContext.Items[HttpContextKeys.Aplicacao] as Aplicacao;
+
+            if (aplicacao == null)
+            {
+                return BadRequest("A aplicacao informada nao existe");
+            }
+
+            var aplicacaoId = aplicacao.Id;
+
             if (arquivo == null || arquivo.Length == 0)
             {
                 return BadRequest("Nenhum arquivo enviado");
             }
-            var upload = await _r2Storage.UploadAsync(arquivo);
+            var upload = await _r2Storage.UploadAsync(arquivo, aplicacaoId);
             return Ok(upload);
         }
 

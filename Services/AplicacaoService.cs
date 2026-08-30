@@ -84,5 +84,23 @@ namespace UploadImagemR2.Services
                 Nome = aplicacao.Nome
             };
         }
+
+        public async Task<Aplicacao?> AuthenticateApiKeyAsync(string apiKey)
+        {
+            var hash = _apiKey.HashApiKey(apiKey);
+            var aplicacao = await _repository.GetByApiKeyHashAsync(hash);
+
+            if (aplicacao is null)
+            {
+                throw new AppException("Aplicação não encontrada.", HttpStatusCode.Unauthorized);
+            }
+
+            if (!aplicacao.Ativa)
+            {
+                throw new AppException("Aplicação não encontrada.", HttpStatusCode.Unauthorized);
+            }
+
+            return aplicacao;
+        }
     }
 }

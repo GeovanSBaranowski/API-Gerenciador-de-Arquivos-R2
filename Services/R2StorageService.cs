@@ -34,7 +34,7 @@ namespace UploadImagemR2.Services
 
         }
 
-        public async Task<UploadResult> UploadAsync(IFormFile file)
+        public async Task<UploadResult> UploadAsync(IFormFile file, Guid aplicacaoId)
         {
             var contentType = file.ContentType;
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
@@ -79,7 +79,9 @@ namespace UploadImagemR2.Services
                     NomeArquivo = arquivo,
                     ContentType = file.ContentType,
                     Tamanho = file.Length,
-                    DataUpload = DateTime.UtcNow
+                    DataUpload = DateTime.UtcNow,
+                    AplicacaoId = aplicacaoId,
+                    NomeBucket = _r2Settings.BucketName
                 };
 
                 _context.Arquivos.Add(arquivoDb);

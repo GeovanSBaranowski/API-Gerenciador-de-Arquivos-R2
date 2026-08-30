@@ -22,6 +22,8 @@ builder.Services.AddScoped<IAplicacaoService, AplicacaoService>();
 
 builder.Services.AddScoped<IAplicacaoRepository, AplicacaoRepository>();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDbContext<AppDbContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -44,6 +46,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapControllers();
 

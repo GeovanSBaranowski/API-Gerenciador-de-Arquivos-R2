@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UploadImagemR2.DTOs.Aplicacoes;
 using UploadImagemR2.Services.Interfaces;
@@ -15,6 +16,7 @@ namespace UploadImagemR2.Controller
             _service = service;
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody]CreateAplicacaoRequest aplicacaoRequest)
         {
@@ -22,6 +24,8 @@ namespace UploadImagemR2.Controller
 
             return Ok(response);
         }
+
+        [AllowAnonymous]
         [HttpGet("id")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
